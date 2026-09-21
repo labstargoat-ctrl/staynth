@@ -13,11 +13,12 @@ export const pool =
   globalForDb.__arenaNextJsPostgresqlPool ??
   new Pool({
     connectionString: databaseUrl || "postgresql://postgres:postgres@localhost:5432/placeholder",
+    max: 5,
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 5000,
     ...(isRemoteDb ? { ssl: { rejectUnauthorized: false } } : {}),
   });
 
-if (process.env.NODE_ENV !== "production") {
-  globalForDb.__arenaNextJsPostgresqlPool = pool;
-}
+globalForDb.__arenaNextJsPostgresqlPool = pool;
 
 export const db = drizzle(pool);
