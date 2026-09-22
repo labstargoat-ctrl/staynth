@@ -11,14 +11,11 @@ export function NewListingForm() {
   const [pending, setPending] = useState(false);
 
   async function onSubmit(formData: FormData) {
-    if (!cover) {
-      setError("Upload a cover photo of the building or plot first.");
-      return;
-    }
     setPending(true);
     setError("");
-    formData.set("coverImage", cover);
-    formData.set("images", [cover, ...gallery].join(","));
+    const finalCover = cover || "/images/hero.jpg";
+    formData.set("coverImage", finalCover);
+    formData.set("images", [finalCover, ...gallery].join(","));
     const result = await createProperty(formData);
     if (result && !result.ok) {
       setError(result.error);

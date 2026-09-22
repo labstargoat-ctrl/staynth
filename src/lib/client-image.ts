@@ -20,14 +20,19 @@ export async function compressImage(file: File, maxWidth: number) {
 }
 
 export async function uploadImage(file: File, kind: "photo" | "pano" | "plan" = "photo") {
-  const maxWidth = kind === "pano" ? 4096 : kind === "plan" ? 2400 : 1800;
+  const maxWidth = kind === "pano" ? 3200 : kind === "plan" ? 2000 : 1200;
   const prepared = await compressImage(file, maxWidth);
-  const body = new FormData();
-  body.append("file", prepared);
-  const response = await fetch("/api/upload", { method: "POST", body });
-  const data = (await response.json()) as { url?: string; error?: string };
-  if (!response.ok || !data.url) {
-    throw new Error(data.error ?? "Upload failed.");
-  }
-  return data.url;
+
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === "string") {
+        resolve(reader.result);
+      } else {
+        reject(new Error("Failed to process image."));
+      }
+    };
+    reader.onerror = () => reject(new Error("Failed to read image file."));
+    reader.readAsDataURL(prepared);
+  });
 }

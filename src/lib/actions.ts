@@ -197,9 +197,9 @@ export async function deleteHotspot(formData: FormData) {
 
 export async function createProperty(formData: FormData) {
   const title = String(formData.get("title") ?? "").trim();
-  const coverImage = String(formData.get("coverImage") ?? "").trim();
-  if (!title || !coverImage) {
-    return { ok: false as const, error: "Title and a cover photo are required." };
+  const coverImage = String(formData.get("coverImage") ?? "").trim() || "/images/hero.jpg";
+  if (!title) {
+    return { ok: false as const, error: "Title is required." };
   }
 
   const galleryRaw = String(formData.get("images") ?? "");
